@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Sticky Header Example</title>
+</head>
+
+<body>
+    <header class="sticky-header">
+        <h1>Your Website Header</h1>
+    </header>
+
+    <!-- Rest of your website content goes here -->
+
+    <script src="script.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .sticky-header {
+            background-color: #333;
+            padding: 10px;
+            color: #fff;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Add some styles to make the transition smoother */
+        .sticky-header.transition {
+            transition: 0.3s ease-in-out;
+        }
+
+        /* Add styles for the content below the header to prevent it from being hidden behind the fixed header */
+        /* Adjust the padding-top value based on your header's height */
+        body {
+            padding-top: 60px;
+            /* Adjust as needed */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const header = document.querySelector('.sticky-header');
+
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 100) {
+                    header.classList.add('transition');
+                    header.classList.add('sticky');
+                } else {
+                    header.classList.remove('sticky');
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>
