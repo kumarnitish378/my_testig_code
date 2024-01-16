@@ -11,8 +11,9 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 
-
+os.makedirs("craweld_url", exist_ok=True)
 pt = time.time()
+
 def get_recursive_urls(base_url, max_depth=3, current_depth=1, visited_urls=None):
     if visited_urls is None:
         visited_urls = set()
@@ -40,13 +41,13 @@ def get_recursive_urls(base_url, max_depth=3, current_depth=1, visited_urls=None
         # Check if the URL is from the same domain
         if parsed_url.netloc == urlparse(base_url).netloc:
             recursive_urls.add(absolute_url)
-            print(f"{round(time.time() - pt, 4)} \t: Runing...: {absolute_url}")
+            print(f"{round(time.time() - pt, 4)} \t: Found :: {absolute_url}")
             recursive_urls.update(get_recursive_urls(absolute_url, max_depth, current_depth + 1, visited_urls))
 
     return list(recursive_urls)
 
 def save_urls_to_file(urls, file_path='recursive_urls_2_gfg.txt'):
-    with open(f"recursive_urls_{file_path}.txt", 'w') as file:
+    with open(f"craweld_url/recursive_urls_{file_path}.txt", 'w') as file:
         for url in urls:
             file.write(url + '\n')
 
@@ -55,10 +56,7 @@ website_url = "https://www.geeksforgeeks.org/"
 website_url = input("Enter Website URL: ")
 recursive_urls = get_recursive_urls(website_url)
 
-save_urls_to_file(recursive_urls, file_path=website_url.split("/")[1])
+
+save_urls_to_file(recursive_urls, file_path=website_url.split("/")[2])
+print(f"Number of URL found: {len(recursive_urls)}")
 print(f"Recursive URLs saved to 'recursive_urls.txt'")
-
-# print(f"Recursive URLs on {website_url}:")
-# for url in recursive_urls:
-#     print(url)
-
