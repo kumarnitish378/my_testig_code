@@ -7,14 +7,11 @@ except ImportError:
     os.system("pip install requests beautifulsoup4")
 
 import time
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse, urljoin
 
-os.makedirs("craweld_url", exist_ok=True)
+os.makedirs("crawled_url", exist_ok=True)
 pt = time.time()
 
-def get_recursive_urls(base_url, max_depth=3, current_depth=1, visited_urls=None):
+def get_recursive_pdf_urls(base_url, max_depth=3, current_depth=1, visited_urls=None):
     if visited_urls is None:
         visited_urls = set()
 
@@ -31,7 +28,7 @@ def get_recursive_urls(base_url, max_depth=3, current_depth=1, visited_urls=None
 
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    recursive_urls = set()
+    recursive_pdf_urls = set()
 
     for a_tag in soup.find_all('a', href=True):
         href = a_tag['href']
@@ -40,23 +37,23 @@ def get_recursive_urls(base_url, max_depth=3, current_depth=1, visited_urls=None
 
         # Check if the URL is from the same domain
         if parsed_url.netloc == urlparse(base_url).netloc:
-            recursive_urls.add(absolute_url)
-            print(f"{round(time.time() - pt, 4)} \t: Found :: {absolute_url}")
-            recursive_urls.update(get_recursive_urls(absolute_url, max_depth, current_depth + 1, visited_urls))
+            if absolute_url.lower().endswith('.pdf'):
+                recursive_pdf_urls.add(absolute_url)
+                print(f"{round(time.time() - pt, 4)} \t: Found PDF :: {absolute_url}")
+            else:
+                recursive_pdf_urls.update(get_recursive_pdf_urls(absolute_url, max_depth, current_depth + 1, visited_urls))
 
-    return list(recursive_urls)
+    return list(recursive_pdf_urls)
 
-def save_urls_to_file(urls, file_path='recursive_urls_2_gfg.txt'):
-    with open(f"craweld_url/recursive_urls_{file_path}.txt", 'w') as file:
+def save_urls_to_file(urls, file_path='pdf_urls.txt'):
+    with open(f"crawled_url/{file_path}", 'w') as file:
         for url in urls:
             file.write(url + '\n')
 
 # Example usage
-website_url = "https://www.geeksforgeeks.org/"
 website_url = input("Enter Website URL: ")
-recursive_urls = get_recursive_urls(website_url)
+recursive_pdf_urls = get_recursive_pdf_urls(website_url)
 
-
-save_urls_to_file(recursive_urls, file_path=website_url.split("/")[2])
-print(f"Number of URL found: {len(recursive_urls)}")
-print(f"Recursive URLs saved to 'recursive_urls.txt'")
+save_urls_to_file(recursive_pdf_urls, file_path=f"{website_url.split('/')[2]}_pdf_urls.txt")
+print(f"Number of PDF URLs found: {len(recursive_pdf_urls)}")
+print(f"PDF URLs saved to '{website_url.split('/')[2]}_pdf_urls.txt'")
